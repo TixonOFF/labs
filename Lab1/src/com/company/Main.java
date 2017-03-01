@@ -8,7 +8,9 @@ public class Main
 
         if (number >= 0)
         {
-            System.out.println(Task1.factorial(1, number) + "\n");
+            System.out.println(Task1.factorial(1, number));
+            System.out.println(Task1.factorial2(number));
+            System.out.println(Task1.factorial3(number) + "\n");
         }
 
         Loader loader1 = new Loader("in.txt");
