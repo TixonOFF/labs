@@ -25,7 +25,7 @@ public class Shaker
         Shaker.compareCount = compareCount;
     }
 
-    public static void sort(Integer[] array)
+    public static void sort(Integer[] array)//n^2
     {
         int left = 0;
         int right = array.length - 1;

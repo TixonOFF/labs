@@ -29,7 +29,7 @@ public class Timsort
     }
 
     public static void sort(Integer[] array)
-    {
+    {//сложность n^2 * log(n)
         //По специальному алгоритму входной массив разделяется на подмассивы.
         //Каждый подмассив сортируется сортировкой вставками.
         //Отсортированные подмассивы собираются в единый массив с помощью сортировки слиянием.
@@ -47,42 +47,38 @@ public class Timsort
             if (currentRunLastIndex + minrun > N - 1)
             {
                 currentRunLastIndex = N - 1;//последний подмассив дополним до конца исходного массива
+
+                setCompareCount(getCompareCount() + 1);
             }
 
-            sortInsertionPart(array, currentRunFirstIndex, currentRunLastIndex);//сортируем подмассив методом вставки
+            sortPart(array, currentRunFirstIndex, currentRunLastIndex);//сортируем подмассив методом вставки
 
             minrunStack.add(new Range(currentRunFirstIndex, currentRunLastIndex));//добавляем в список границ подмассивов
+
+            setCompareCount(getCompareCount() + 1);
         }
 
         for (int i = 1; i < minrunStack.size(); i++)
         {
             merge(array, minrunStack.get(i).start, minrunStack.get(i).end);
+
+            setCompareCount(getCompareCount() + 1);
         }
     }
 
-    public static void sortInsertionPart(Integer[] array, int start, int end)//сортировка вставками
-    {
-        for (int i = start + 1; i <= end; i++)
+    public static void sortPart(Integer[] array, int start, int end)//сортировка вставками
+    {//n = start - end, сложность - n^2
+        for(int i = start + 1; i <= end; i++)
         {
-            for (int j = start; j < i; j++)
+            for (int j = i; j > 0 && array[j - 1] > array[j]; j--) // пока j>0 и элемент j-1 > j
             {
-                if (array[i] < array[j])
-                {
-                    int value = array[i];
-
-                    for (int k = i; k > j; k--)
-                    {
-                        array[k] = array[k - 1];
-                    }
-
-                    array[j] = value;
-                }
+                swap(array, j - 1, j);
             }
         }
     }
 
     private static int getMinrun(int n)//длина подмассивов
-    {
+    {//сложность - log(n)
         //берутся старшие 6 бит из N и добавляется единица, если в оставшихся младших битах есть хотя бы один ненулевой
         int r = 0;
 
@@ -98,10 +94,9 @@ public class Timsort
     }
 
     public static void merge(Integer[] array, int start, int end)//слияние подмассивов
-    {
+    {//n = end + 1, сложность - n * log(n)
         Integer[] left = Arrays.copyOfRange(array, 0, start);
         Integer[] right = Arrays.copyOfRange(array, start, end + 1);
-
 
         int leftIndex = 0;
         int rightIndex = 0;//актуальные индексы для массивов
@@ -123,9 +118,11 @@ public class Timsort
             {
                 while (rightIndex != right.length)//добавляем все оставшиеся элементы второго в результат
                 {
-                    array[i] = right[rightIndex];
+                    array[i + 1] = right[rightIndex];
                     rightIndex++;
                     i++;
+
+                    setCompareCount(getCompareCount() + 1);
                 }
 
                 return;
@@ -135,14 +132,27 @@ public class Timsort
             {
                 while (leftIndex != left.length)//добавляем все оставшиеся элементы первого в результат
                 {
-                    array[i] = left[leftIndex];
+                    array[i + 1] = left[leftIndex];
                     leftIndex++;
                     i++;
+
+                    setCompareCount(getCompareCount() + 1);
                 }
 
                 return;
             }
+
+            setCompareCount(getCompareCount() + 4);
         }
+    }
+
+    public static void swap(Integer[] a, int i, int j)//3
+    {
+        int swap = a[i];
+        a[i] = a[j];
+        a[j] = swap;
+
+        setSwapCount(getSwapCount() + 1);
     }
 
     static class Range
