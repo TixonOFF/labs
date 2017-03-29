@@ -10,13 +10,13 @@ public class Main
     public static void main(String[] args)
     {
         Timer timer = new Timer();
-        int size = 100;
+        int size = 1000;
 
 
         Integer[] array = new Integer[size];
         for (int i = 0; i < size; i++)
         {
-            array[i] = ((((i % 10) * i) % 10)* i * i) % 10;
+            array[i] = i % 10;
         }
 
 
@@ -31,7 +31,7 @@ public class Main
 
         for (int i = 0; i < size; i++)
         {
-            array[i] = ((((i % 10) * i) % 10)* i * i) % 10;
+            array[i] = i % 10;
         }
 
 
