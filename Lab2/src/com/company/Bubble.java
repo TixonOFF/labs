@@ -1,26 +1,26 @@
 package com.company;
 
-public class Bubble
+public class Bubble <T extends Comparable>
 {
-    public static void sort(Integer[] array)
+    public void sort(T[] array)
     {
         int n = array.length;
 
-        for (int i = 1; i < n - 1; i++)
+        for (int i = 0; i < n - 1; i++)
         {
-            for (int j = n - 1; j > i; j--)
+            for (int j = 0; j < n - 1 - i; j++)
             {
-                if (array[j - 1] > array[j])
+                if (array[j].compareTo(array[j + 1]) > 0)
                 {
-                    swap(array, j, j - 1);
+                    swap(array, j, j + 1);
                 }
             }
         }
     }
 
-    public static void swap(Integer[] a, int i, int j)
+    public void swap(T[] a, int i, int j)
     {
-        int swap = a[i];
+        T swap = a[i];
         a[i] = a[j];
         a[j] = swap;
     }

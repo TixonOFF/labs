@@ -1,23 +1,24 @@
 package com.company;
 
-public class Insertion2
+public class Insertion2 <T extends Comparable>
 {
-    public static void sort(Integer[] array)
+    public void sort(T[] array)
     {
         int n = array.length;
-        int L, R, x, m;
+        int L, R, m;
+        T x;
 
         for (int i = 1; i < n; i++)
         {
-            x = array[i];
-            L = 1;
-            R = i;
+            x = array[i];//запомнили текущий элемент
+            L = 0;
+            R = i;//установили границы
 
-            while (L < R)
+            while (L < R)//сужаем границы
             {
-                m = (L + R) / 2;
+                m = (L + R) / 2;//середина
 
-                if (array[m] < x)
+                if (array[m].compareTo(x) < 0)
                 {
                     L = m + 1;
                 }
@@ -27,7 +28,7 @@ public class Insertion2
                 }
             }
 
-            for (int j = i; j >= R + 1; j--)
+            for (int j = i; j >= R + 1; j--)//сдвигаем элемент
             {
                 array[j] = array[j - 1];
             }

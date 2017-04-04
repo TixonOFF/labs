@@ -53,7 +53,7 @@ public class Lexicon
                 i++;
             }
 
-            sortByPosition(res, position);//сортируем все элементы res по символу с индексом position
+            res = sortByPosition(res, position);//сортируем все элементы res по символу с индексом position
 
             position--;
         }
@@ -63,22 +63,32 @@ public class Lexicon
         System.arraycopy(resArray, 0, array, 0, array.length);//копируем resArray в array
     }
 
-    public static void sortByPosition(ArrayList <String> array, int position)//сортировка array по символу с индексом position(метод пузырька)
+    public static ArrayList<String> sortByPosition(ArrayList <String> array, int position)//сортировка array по символу с индексом position
     {
-        for (int i = 0; i < array.size() - 1; i++)
+        ArrayList <ArrayList <String>> table = new ArrayList<>();
+        for (int i = 0; i < 128; i++)
         {
-            for (int j = 0; j < array.size() - 1 - i; j++)
-            {
-                Character c1 = array.get(j).charAt(position);
-                Character c2 = array.get(j + 1).charAt(position);
+            table.add(new ArrayList<>());
+        }
 
-                if (c1.toString().compareToIgnoreCase(c2.toString()) > 0)
+        for (int i = 0; i < array.size(); i++)
+        {
+            table.get(Character.toLowerCase(array.get(i).charAt(position))).add(array.get(i));//добавляем слово в колонку с индексом array[i][position]
+        }
+
+        ArrayList <String> a = new ArrayList<>();
+
+        for (int i = 0; i < table.size(); i++)
+        {
+            if (!table.get(i).isEmpty())
+            {
+                for (int j = table.get(i).size() - 1; j >= 0; j--)
                 {
-                    String str = array.get(j);
-                    array.set(j, array.get(j + 1));
-                    array.set(j + 1, str);
+                    a.add(table.get(i).get(j));//последовательно все забираем из таблицы
                 }
             }
         }
+
+        return a;
     }
 }
