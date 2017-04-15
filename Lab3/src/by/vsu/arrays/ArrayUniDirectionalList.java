@@ -177,8 +177,6 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
 
         T res = pop();
 
-        decrementPointer();
-
         return res;
     }
 
@@ -215,11 +213,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     public boolean pushFront(Object value)
     {
         pointer = head;
-        boolean res = pushBefore(value);
-        head = pointers[pointer];
-        pointer = head;
-
-        return res;
+        return pushBefore(value);
     }
 
     @Override
@@ -236,24 +230,20 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < array.length; i++)
-        {
-            stringBuilder.append(array[i]);
-            stringBuilder.append(" ");
-        }
+        int pos = pointer;
 
-        stringBuilder.append("\n");
+        pointer = head;
 
         for (int i = 0; i < array.length; i++)
         {
-            stringBuilder.append(pointers[i]);
-            stringBuilder.append(" ");
+            if (array[i] != null)
+            {
+                stringBuilder.append(next());
+                stringBuilder.append(" ");
+            }
         }
 
-        stringBuilder.append("\n");
-        stringBuilder.append(pointer);
-        stringBuilder.append("\n");
-        stringBuilder.append(head);
+        pointer = pos;
 
         return stringBuilder.toString();
     }

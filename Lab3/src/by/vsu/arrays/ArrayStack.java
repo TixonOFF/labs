@@ -25,7 +25,7 @@ public class ArrayStack<T> extends AbstractStack
     @Override
     public boolean isEmpty()
     {
-        return top != 0;
+        return top == 0;
     }
 
     @Override
