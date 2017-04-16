@@ -60,16 +60,16 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
             int pos = pointer;
             decrementPointer();
 
-            if (pos == head)
+            if (pos == head)//если нужно достать элемент из начала списка
             {
-                head = pointers[head];
+                head = pointers[head];//сдвигаем начало вперёд
             }
 
-            pointers[pointer] = pointers[pos];
-            pointers[pos] = null;
+            pointers[pointer] = pointers[pos];//устанавливаем сслыку на следующий элемент
+            pointers[pos] = null;//удаляем следующий за текущим
 
-            res = array[pos];
-            array[pos] = null;
+            res = array[pos];//запоминаем значение которое удаляем
+            array[pos] = null;//удаляем следующий за текущим
         }
 
         return res;
@@ -118,7 +118,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
         boolean isFree = false;
         int pos = 0;
 
-        for (int i = 0; i < array.length; i++)
+        for (int i = 0; i < array.length; i++)//есть ли свободное место
         {
             if (array[i] == null)
             {
@@ -131,11 +131,11 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
 
         if (isFree)
         {
-            int next = pointers[pointer];
-            pointers[pointer] = pos;
-            pointers[pos] = next;
+            int next = pointers[pointer];//запомнили где следующий элемент
+            pointers[pointer] = pos;//связали первый с вставляемым
+            pointers[pos] = next;//связали вставляемый со следующим
 
-            pointer = pos;//
+            pointer = pos;//переместили указатель
 
             return true;
         }
@@ -151,7 +151,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
             {
                 if (pointers[i] != null)
                 {
-                    if (pointers[i] == pointer)
+                    if (pointers[i] == pointer)//если указывает на текущий элемент
                     {
                         pointer = i;
                         return;
@@ -189,7 +189,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
 
         T res = popAfter();
 
-        incrementPointer();
+        incrementPointer();//возвращаем указатель в начало
         head = pointer;
 
         return res;
@@ -204,7 +204,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
         boolean res = pushAfter(value);
 
         pointer = head;
-        decrementPointer();
+        decrementPointer();//перемещаем указатель в конец
 
         return res;
     }
