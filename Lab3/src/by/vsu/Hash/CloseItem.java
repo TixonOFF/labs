@@ -1,5 +1,6 @@
 package by.vsu.Hash;
 
+//Класс сущность, содержащий целый ключ, и некоторое значение.
 public class CloseItem<V>
 {
 	private int key;
