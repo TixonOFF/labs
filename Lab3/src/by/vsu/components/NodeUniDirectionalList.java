@@ -2,33 +2,51 @@ package by.vsu.components;
 
 import by.vsu.abstractClasses.AbstractUniDirectionalList;
 import by.vsu.entity.Node;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
 {
     private Node<T> head = null;
-    private int pointer = 0;
+    private Node<T> tail = null;
+    private Node<T> pointer = null;
 
 
     @Override
-    public T next()
+    public T nextValue()
     {
         if (!isEmpty())
         {
-            Node<T> node = head;
+            T res = pointer.getValue();
 
-            for (int i = 0; i < pointer; i++)
+            if (pointer.getNext() == null)
             {
-                node = node.getNextNode();
-
-                if (node == null)
-                {
-                    node = head;
-                }
+                pointer = head;
+            }
+            else
+            {
+                pointer = pointer.getNext();
             }
 
-            pointer++;
+            return res;
+        }
 
-            return node.getValue();
+        return null;
+    }
+
+    @Nullable
+    private Node<T> next()
+    {
+        if (!isEmpty())
+        {
+            if (pointer.getNext() == null)
+            {
+                return head;
+            }
+            else
+            {
+                return pointer.getNext();
+            }
         }
 
         return null;
@@ -45,21 +63,39 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
     {
         if (!isEmpty())
         {
-            if (head.getNextNode() == null)
+            if (head.getNext() == null)
             {
                 T value = head.getValue();
                 head = null;
-                pointer = 0;
+                tail = null;
+                pointer = null;
 
                 return value;
             }
-
-            pointer = Math.max(head.getSize() - 2, 0);
-
-            return head.popBack();
+            else
+            {
+                return popBack(head);
+            }
         }
 
         return null;
+    }
+
+    private T popBack(Node<T> node)
+    {
+        if (node.getNext() == tail)
+        {
+            T value = tail.getValue();
+
+            tail = node;
+            node.setNext(null);
+
+            pointer = tail;
+
+            return value;
+        }
+
+        return (T)popBack(node.getNext());
     }
 
     @Override
@@ -67,11 +103,12 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
     {
         if (!isEmpty())
         {
-            Node<T> node = this.head;
-            this.head = this.head.getNextNode();
-            pointer = 0;
+            T res = head.getValue();
 
-            return node.getValue();
+            head = head.getNext();
+            pointer = head;
+
+            return res;
         }
 
         return null;
@@ -83,13 +120,15 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
         if (isEmpty())
         {
             head = new Node<>((T)value);
+            tail = head;
+            pointer = head;
         }
         else
         {
-            head.pushBack((T)value);
+            tail.setNext(new Node<>((T)value));
+            tail = tail.getNext();
+            pointer = tail;
         }
-
-        pointer = head.getSize() - 1;
 
         return true;
     }
@@ -99,16 +138,18 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
     {
         if (isEmpty())
         {
-            head = new Node(value);
+            head = new Node<>((T)value);
+            tail = head;
+            pointer = head;
         }
         else
         {
-            Node<T> node = this.head;
-            this.head = new Node<>((T)value);
-            this.head.setNextNode(node);
-        }
+            Node<T> node = head;
+            head = new Node<>((T)value);
+            head.setNext(node);
 
-        pointer = 0;
+            pointer = head;
+        }
 
         return true;
     }
@@ -116,86 +157,33 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
     @Override
     public T pop()
     {
-        pointer = Math.max(0, --pointer);
-        T res = popAfter();
-        pointer = Math.max(0, pointer);
-
-        return res;
-    }
-
-    @Override
-    public T popAfter()
-    {
         if (!isEmpty())
         {
-            Node<T> node = head;
+            T res = pointer.getValue();
 
-            for (int i = 0; i < pointer; i++)
-            {
-                node = node.getNextNode();
+            pointer.setValue(next().getValue());
+            pointer.setNext(next().getNext());
 
-                if (node == null)
-                {
-                    node = head;
-                }
-            }
-
-            if (node.getNextNode() != null)
-            {
-                T res = (T)node.getNextNode().getValue();
-                node.setNextNode(node.getNextNode().getNextNode());
-
-                return res;
-            }
-            else
-            {
-                T res = head.getValue();
-                head = head.getNextNode();
-                pointer = 0;
-
-                return res;
-            }
+            return res;
         }
 
         return null;
     }
 
     @Override
+    public T popAfter()
+    {
+        pointer = next();
+
+        return pop();
+    }
+
+    @Override
     public boolean pushBefore(Object value)
     {
-        if (isEmpty())
-        {
-            head = new Node<>((T)value);
-        }
-        else
-        {
-            Node<T> node = head;
+        pointer = next();
 
-            for (int i = 0; i < pointer - 1; i++)
-            {
-                node = node.getNextNode();
-
-                if (node == null)
-                {
-                    node = head;
-                }
-            }
-
-            if (node == head)
-            {
-                Node<T> first = new Node<>((T)value);
-                first.setNextNode(head);
-                head = first;
-            }
-            else
-            {
-                Node<T> nextNode = node.getNextNode();
-                node.setNextNode(new Node<>((T) value));
-                node.getNextNode().setNextNode(nextNode);
-            }
-        }
-
-        return true;
+        return pushAfter(value);
     }
 
     @Override
@@ -204,24 +192,15 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
         if (isEmpty())
         {
             head = new Node<>((T)value);
+            tail = head;
+            pointer = head;
         }
         else
         {
-            Node<T> node = head;
+            Node<T> node = next();
 
-            for (int i = 0; i < pointer; i++)
-            {
-                node = node.getNextNode();
-
-                if (node == null)
-                {
-                    node = head;
-                }
-            }
-
-            Node<T> nextNode = node.getNextNode();
-            node.setNextNode(new Node<>((T)value));
-            node.getNextNode().setNextNode(nextNode);
+            pointer.setNext(new Node<>((T)value));
+            pointer.getNext().setNext(node);
         }
 
         return true;
@@ -234,7 +213,23 @@ public class NodeUniDirectionalList<T> extends AbstractUniDirectionalList
 
         if (!isEmpty())
         {
-            stringBuilder.append(head);
+            stringBuilder.append(toString(head));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    @NotNull
+    private String toString(Node<T> node)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(node);
+        stringBuilder.append(" ");
+
+        if (node.getNext() != null && node.getNext() != head)
+        {
+            stringBuilder.append(toString(node.getNext()));
         }
 
         return stringBuilder.toString();

@@ -2,16 +2,18 @@ package by.vsu.components;
 
 import by.vsu.abstractClasses.AbstractQueue;
 import by.vsu.entity.Node;
+import org.jetbrains.annotations.NotNull;
 
 public class NodeQueue<T> extends AbstractQueue
 {
-    private Node<T> node = null;
+    private Node<T> head = null;
+    private Node<T> tail = null;
 
 
     @Override
     public boolean isEmpty()
     {
-        return node == null;
+        return head == null;
     }
 
     @Override
@@ -19,10 +21,11 @@ public class NodeQueue<T> extends AbstractQueue
     {
         if (!isEmpty())
         {
-            Node<T> node = this.node;
-            this.node = this.node.getNextNode();
+            T res = head.getValue();
 
-            return node.getValue();
+            head = head.getNext();
+
+            return res;
         }
 
         return null;
@@ -33,11 +36,13 @@ public class NodeQueue<T> extends AbstractQueue
     {
         if (isEmpty())
         {
-            node = new Node(value);
+            head = new Node(value);
+            tail = head;
         }
         else
         {
-            node.pushBack((T)value);
+            tail.setNext(new Node<>((T)value));
+            tail = tail.getNext();
         }
 
         return true;
@@ -50,7 +55,23 @@ public class NodeQueue<T> extends AbstractQueue
 
         if (!isEmpty())
         {
-            stringBuilder.append(node);
+            stringBuilder.append(toString(head));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    @NotNull
+    private String toString(Node<T> node)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(node);
+        stringBuilder.append(" ");
+
+        if (node.getNext() != null)
+        {
+            stringBuilder.append(toString(node.getNext()));
         }
 
         return stringBuilder.toString();

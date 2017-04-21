@@ -2,18 +2,20 @@ package by.vsu.entity;
 
 public class Node<T>
 {
-    private Node nextNode = null;
-    private T value;
+    protected Node next = null;
+    protected T value;
 
+
+    public Node(){}
 
     public Node(T value)
     {
         this.value = value;
     }
 
-    public Node getNextNode()
+    public Node getNext()
     {
-        return nextNode;
+        return next;
     }
 
     public T getValue()
@@ -21,9 +23,9 @@ public class Node<T>
         return value;
     }
 
-    public void setNextNode(Node nextNode)
+    public void setNext(Node next)
     {
-        this.nextNode = nextNode;
+        this.next = next;
     }
 
     public void setValue(T value)
@@ -31,60 +33,12 @@ public class Node<T>
         this.value = value;
     }
 
-    public Node next()
-    {
-        return nextNode;
-    }
-
-    public void pushBack(T value)
-    {
-        if (nextNode == null)
-        {
-            nextNode = new Node(value);
-        }
-        else
-        {
-            nextNode.pushBack(value);
-        }
-    }
-
-    public T popBack()
-    {
-        if (nextNode.getNextNode() == null)
-        {
-            T value = (T)nextNode.getValue();
-            nextNode = null;
-
-            return value;
-        }
-
-        return (T)nextNode.popBack();
-    }
-
-    public int getSize()
-    {
-        if (nextNode == null)
-        {
-            return 1;
-        }
-
-        return 1 + nextNode.getSize();
-    }
-
     @Override
     public String toString()
     {
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (value != null)
-        {
-            stringBuilder.append(value);
-            stringBuilder.append(" ");
-        }
-        if (nextNode != null)
-        {
-            stringBuilder.append(nextNode);
-        }
+        stringBuilder.append(value);
 
         return stringBuilder.toString();
     }

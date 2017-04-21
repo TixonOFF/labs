@@ -17,27 +17,61 @@ public class ArrayQueue<T> extends AbstractQueue
         }
         else
         {
-            array = (T[]) new Object[0];
+            array = (T[]) new Object[-size];
         }
 
-        top = 0;
+        top = -1;
         bottom = -1;
     }
 
     @Override
     public boolean isEmpty()
     {
-        return top == bottom + 1;
+        return top == -1;
     }
 
     @Override
     public boolean pushBack(Object value)
     {
-        if (top < array.length)
+        if (isEmpty())
         {
-            array[top++] = (T)value;
+            if (array.length > 0)
+            {
+                array[0] = (T)value;
+                top = 0;
+                bottom = -1;
 
-            return true;
+                return true;
+            }
+        }
+
+        if (top >= bottom)//если массив без дыры
+        {
+            if (top + 1 == array.length)
+            {
+                if (bottom > 0)
+                {
+                    array[0] = (T)value;
+                    top = 0;
+
+                    return true;
+                }
+            }
+            else
+            {
+                array[++top] = (T)value;
+
+                return true;
+            }
+        }
+        else
+        {
+            if (top + 1 < bottom)
+            {
+                array[++top] = (T)value;
+
+                return true;
+            }
         }
 
         return false;
@@ -48,7 +82,44 @@ public class ArrayQueue<T> extends AbstractQueue
     {
         if (!isEmpty())
         {
-            return array[++bottom];
+            if (top >= bottom)
+            {
+                if (bottom == -1)
+                {
+                    bottom = 1;
+
+                    if (top == 0)
+                    {
+                        top = -1;
+                    }
+
+                    return array[0];
+                }
+                else
+                {
+                    if (top == bottom)
+                    {
+                        int res = top;
+                        top = -1;//после удаления будет пусто
+                        bottom = -1;
+
+                        return array[res];
+                    }
+
+                    return array[bottom++];
+                }
+            }
+            else
+            {
+                if (bottom + 1 == array.length)
+                {
+                    bottom = 0;
+
+                    return array[array.length - 1];
+                }
+
+                return array[bottom++];
+            }
         }
 
         return null;
@@ -59,10 +130,32 @@ public class ArrayQueue<T> extends AbstractQueue
     {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = bottom + 1; i < top; i++)
+        if (!isEmpty())
         {
-            stringBuilder.append(array[i]);
-            stringBuilder.append(" ");
+            if (top >= bottom)
+            {
+                for (int i = Math.max(bottom, 0); i <= top; i++)
+                {
+                    stringBuilder.append(array[i]);
+                    stringBuilder.append(" ");
+                }
+            }
+            else
+            {
+                int i = bottom;
+
+                for (; i < array.length; i++)
+                {
+                    stringBuilder.append(array[i]);
+                    stringBuilder.append(" ");
+                }
+
+                for (i = 0; i <= top; i++)
+                {
+                    stringBuilder.append(array[i]);
+                    stringBuilder.append(" ");
+                }
+            }
         }
 
         return stringBuilder.toString();

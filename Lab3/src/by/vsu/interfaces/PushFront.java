@@ -1,6 +1,6 @@
 package by.vsu.interfaces;
 
-public interface PushFront extends IsEmpty
+public interface PushFront extends DataStructure
 {
     boolean pushFront(Object value);
 }

@@ -16,24 +16,24 @@ public class ArrayStack<T> extends AbstractStack
         }
         else
         {
-            array = (T[]) new Object[0];
+            array = (T[]) new Object[-size];
         }
 
-        top = 0;
+        top = -1;
     }
 
     @Override
     public boolean isEmpty()
     {
-        return top == 0;
+        return top == -1;
     }
 
     @Override
-    public Object popBack()
+    public T popBack()
     {
         if (!isEmpty())
         {
-            return array[--top];
+            return array[top--];
         }
 
         return null;
@@ -42,9 +42,9 @@ public class ArrayStack<T> extends AbstractStack
     @Override
     public boolean pushBack(Object value)
     {
-        if (top  < array.length)
+        if (top + 1 < array.length)
         {
-            array[top++] = (T)value;
+            array[++top] = (T)value;
 
             return true;
         }
@@ -57,7 +57,7 @@ public class ArrayStack<T> extends AbstractStack
     {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < top; i++)
+        for (int i = 0; i <= top; i++)
         {
             stringBuilder.append(array[i]);
             stringBuilder.append(" ");

@@ -2,16 +2,18 @@ package by.vsu.components;
 
 import by.vsu.abstractClasses.AbstractStack;
 import by.vsu.entity.Node;
+import org.jetbrains.annotations.NotNull;
 
 public class NodeStack<T> extends AbstractStack
 {
-    private Node<T> node = null;
+    private Node<T> head = null;
+    private Node<T> tail = null;
 
 
     @Override
     public boolean isEmpty()
     {
-        return node == null;
+        return head == null;
     }
 
     @Override
@@ -19,18 +21,36 @@ public class NodeStack<T> extends AbstractStack
     {
         if (!isEmpty())
         {
-            if (node.getNextNode() == null)
+            if (head.getNext() == null)
             {
-                T value = node.getValue();
-                node = null;
+                T value = head.getValue();
+                head = null;
+                tail = null;
 
                 return value;
             }
-
-            return node.popBack();
+            else
+            {
+                return popBack(head);
+            }
         }
 
         return null;
+    }
+
+    private T popBack(Node<T> node)
+    {
+        if (node.getNext() == tail)
+        {
+            T value = tail.getValue();
+
+            tail = node;
+            node.setNext(null);
+
+            return value;
+        }
+
+        return (T)popBack(node.getNext());
     }
 
     @Override
@@ -38,11 +58,13 @@ public class NodeStack<T> extends AbstractStack
     {
         if (isEmpty())
         {
-            node = new Node(value);
+            head = new Node(value);
+            tail = head;
         }
         else
         {
-            node.pushBack((T)value);
+            tail.setNext(new Node<>((T)value));
+            tail = tail.getNext();
         }
 
         return true;
@@ -55,7 +77,23 @@ public class NodeStack<T> extends AbstractStack
 
         if (!isEmpty())
         {
-            stringBuilder.append(node);
+            stringBuilder.append(toString(head));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    @NotNull
+    private String toString(Node<T> node)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(node);
+        stringBuilder.append(" ");
+
+        if (node.getNext() != null)
+        {
+            stringBuilder.append(toString(node.getNext()));
         }
 
         return stringBuilder.toString();

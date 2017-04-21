@@ -5,26 +5,30 @@ import by.vsu.abstractClasses.AbstractDoubleDirectionalList;
 public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
 {
     private T[] array;
-    private Integer[] pointers;
+    private Integer[] nextPointers;
+    private Integer[] previousPointers;
     private int pointer;
     private int head;
-
+    private int tail;
 
     public ArrayDoubleDirectionalList(int size)
     {
         if (size > 0)
         {
             array = (T[]) new Object[size];
-            pointers = new Integer[size];
+            nextPointers = new Integer[size];
+            previousPointers = new Integer[size];
         }
         else
         {
-            array = (T[]) new Object[0];
-            pointers = new Integer[0];
+            array = (T[]) new Object[-size];
+            nextPointers = new Integer[-size];
+            previousPointers = new Integer[-size];
         }
 
         pointer = 0;
         head = 0;
+        tail = 0;
     }
 
     @Override
@@ -60,16 +64,24 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
             int pos = pointer;
             decrementPointer();
 
-            if (pos == head)
+            if (pos == head)//если нужно достать элемент из начала списка
             {
-                head = pointers[head];
+                head = nextPointers[head];//сдвигаем начало вперёд
             }
 
-            pointers[pointer] = pointers[pos];
-            pointers[pos] = null;
+            if (pos == tail)
+            {
+                tail = pointer;
+            }
 
-            res = array[pos];
-            array[pos] = null;
+            nextPointers[pointer] = nextPointers[pos];//устанавливаем сслыки на следующий и предыдущий элементы
+            previousPointers[nextPointers[pos]] = pointer;
+
+            nextPointers[pos] = null;//удаляем следующий за текущим
+            previousPointers[pos] = null;
+
+            res = array[pos];//запоминаем значение которое удаляем
+            array[pos] = null;//удаляем следующий за текущим
         }
 
         return res;
@@ -104,7 +116,7 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
             if (array.length > 0)
             {
                 array[0] = (T) value;
-                pointers[0] = 0;
+                nextPointers[0] = 0;
 
                 head = 0;
                 pointer = 0;
@@ -118,7 +130,7 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
         boolean isFree = false;
         int pos = 0;
 
-        for (int i = 0; i < array.length; i++)
+        for (int i = 0; i < array.length; i++)//есть ли свободное место
         {
             if (array[i] == null)
             {
@@ -131,11 +143,20 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
 
         if (isFree)
         {
-            int next = pointers[pointer];
-            pointers[pointer] = pos;
-            pointers[pos] = next;
+            int next = nextPointers[pointer];//запомнили где следующий элемент
 
-            pointer = pos;//
+            nextPointers[pointer] = pos;//связали первый с вставляемым
+            nextPointers[pos] = next;//связали вставляемый со следующим
+
+            previousPointers[pos] = pointer;
+            previousPointers[nextPointers[pos]] = pos;
+
+            if (pointer == tail)
+            {
+                tail = pos;
+            }
+
+            pointer = pos;//переместили указатель
 
             return true;
         }
@@ -147,17 +168,7 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
     {
         if (!isEmpty())
         {
-            for (int i = 0; i < array.length; i++)
-            {
-                if (pointers[i] != null)
-                {
-                    if (pointers[i] == pointer)
-                    {
-                        pointer = i;
-                        return;
-                    }
-                }
-            }
+            pointer = previousPointers[pointer];
         }
     }
 
@@ -165,19 +176,16 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
     {
         if (!isEmpty())
         {
-            pointer = pointers[pointer];
+            pointer = nextPointers[pointer];
         }
     }
 
     @Override
     public T popBack()
     {
-        pointer = head;
-        decrementPointer();
+        pointer = tail;
 
         T res = pop();
-
-        decrementPointer();
 
         return res;
     }
@@ -191,7 +199,7 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
 
         T res = popAfter();
 
-        incrementPointer();
+        incrementPointer();//возвращаем указатель в начало
         head = pointer;
 
         return res;
@@ -200,13 +208,11 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
     @Override
     public boolean pushBack(Object value)
     {
-        pointer = head;
-        decrementPointer();
+        pointer = tail;
 
         boolean res = pushAfter(value);
 
-        pointer = head;
-        decrementPointer();
+        pointer = tail;//перемещаем указатель в конец
 
         return res;
     }
@@ -215,15 +221,11 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
     public boolean pushFront(Object value)
     {
         pointer = head;
-        boolean res = pushBefore(value);
-        head = pointers[pointer];
-        pointer = head;
-
-        return res;
+        return pushBefore(value);
     }
 
     @Override
-    public T next()
+    public T nextValue()
     {
         T res = array[pointer];
         incrementPointer();
@@ -232,7 +234,7 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
     }
 
     @Override
-    public Object previous()
+    public Object previousValue()
     {
         T res = array[pointer];
         decrementPointer();
@@ -253,7 +255,7 @@ public class ArrayDoubleDirectionalList<T> extends AbstractDoubleDirectionalList
         {
             if (array[i] != null)
             {
-                stringBuilder.append(next());
+                stringBuilder.append(nextValue());
                 stringBuilder.append(" ");
             }
         }

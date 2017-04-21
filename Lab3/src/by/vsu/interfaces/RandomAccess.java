@@ -1,6 +1,6 @@
 package by.vsu.interfaces;
 
-public interface RandomAccess extends IsEmpty, PopBack, PopFront, PushBack, PushFront
+public interface RandomAccess extends DataStructure, PopBack, PopFront, PushBack, PushFront
 {
     Object pop();
     Object popAfter();

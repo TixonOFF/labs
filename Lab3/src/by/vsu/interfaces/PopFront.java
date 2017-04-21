@@ -1,6 +1,6 @@
 package by.vsu.interfaces;
 
-public interface PopFront extends IsEmpty
+public interface PopFront extends DataStructure
 {
     Object popFront();
 }

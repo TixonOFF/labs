@@ -8,7 +8,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     private Integer[] pointers;
     private int pointer;
     private int head;
-
+    private int tail;
 
     public ArrayUniDirectionalList(int size)
     {
@@ -19,12 +19,13 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
         }
         else
         {
-            array = (T[]) new Object[0];
-            pointers = new Integer[0];
+            array = (T[]) new Object[-size];
+            pointers = new Integer[-size];
         }
 
         pointer = 0;
         head = 0;
+        tail = 0;
     }
 
     @Override
@@ -63,6 +64,11 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
             if (pos == head)//если нужно достать элемент из начала списка
             {
                 head = pointers[head];//сдвигаем начало вперёд
+            }
+
+            if (pos == tail)
+            {
+                tail = pointer;
             }
 
             pointers[pointer] = pointers[pos];//устанавливаем сслыку на следующий элемент
@@ -135,6 +141,11 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
             pointers[pointer] = pos;//связали первый с вставляемым
             pointers[pos] = next;//связали вставляемый со следующим
 
+            if (pointer == tail)
+            {
+                tail = pos;
+            }
+
             pointer = pos;//переместили указатель
 
             return true;
@@ -147,15 +158,17 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     {
         if (!isEmpty())
         {
-            for (int i = 0; i < array.length; i++)
+            int res = pointer;
+
+            while (true)
             {
-                if (pointers[i] != null)
+                res = pointers[res];
+
+                if (pointers[res] == pointer)
                 {
-                    if (pointers[i] == pointer)//если указывает на текущий элемент
-                    {
-                        pointer = i;
-                        return;
-                    }
+                    pointer = res;
+
+                    return;
                 }
             }
         }
@@ -172,8 +185,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     @Override
     public T popBack()
     {
-        pointer = head;
-        decrementPointer();
+        pointer = tail;
 
         T res = pop();
 
@@ -198,13 +210,11 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     @Override
     public boolean pushBack(Object value)
     {
-        pointer = head;
-        decrementPointer();
+        pointer = tail;
 
         boolean res = pushAfter(value);
 
-        pointer = head;
-        decrementPointer();//перемещаем указатель в конец
+        pointer = tail;//перемещаем указатель в конец
 
         return res;
     }
@@ -217,7 +227,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
     }
 
     @Override
-    public T next()
+    public T nextValue()
     {
         T res = array[pointer];
         incrementPointer();
@@ -238,7 +248,7 @@ public class ArrayUniDirectionalList<T> extends AbstractUniDirectionalList
         {
             if (array[i] != null)
             {
-                stringBuilder.append(next());
+                stringBuilder.append(nextValue());
                 stringBuilder.append(" ");
             }
         }

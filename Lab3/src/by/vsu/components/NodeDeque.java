@@ -2,16 +2,18 @@ package by.vsu.components;
 
 import by.vsu.abstractClasses.AbstractDeque;
 import by.vsu.entity.Node;
+import org.jetbrains.annotations.NotNull;
 
 public class NodeDeque<T> extends AbstractDeque
 {
-    private Node<T> node = null;
+    private Node<T> head = null;
+    private Node<T> tail = null;
 
 
     @Override
     public boolean isEmpty()
     {
-        return node == null;
+        return head == null;
     }
 
     @Override
@@ -19,18 +21,36 @@ public class NodeDeque<T> extends AbstractDeque
     {
         if (!isEmpty())
         {
-            if (node.getNextNode() == null)
+            if (head.getNext() == null)
             {
-                T value = node.getValue();
-                node = null;
+                T value = head.getValue();
+                head = null;
+                tail = null;
 
                 return value;
             }
-
-            return node.popBack();
+            else
+            {
+                return popBack(head);
+            }
         }
 
         return null;
+    }
+
+    private T popBack(Node<T> node)
+    {
+        if (node.getNext() == tail)
+        {
+            T value = tail.getValue();
+
+            tail = node;
+            node.setNext(null);
+
+            return value;
+        }
+
+        return (T)popBack(node.getNext());
     }
 
     @Override
@@ -38,10 +58,11 @@ public class NodeDeque<T> extends AbstractDeque
     {
         if (!isEmpty())
         {
-            Node<T> node = this.node;
-            this.node = this.node.getNextNode();
+            T res = head.getValue();
 
-            return node.getValue();
+            head = head.getNext();
+
+            return res;
         }
 
         return null;
@@ -52,11 +73,13 @@ public class NodeDeque<T> extends AbstractDeque
     {
         if (isEmpty())
         {
-            node = new Node(value);
+            head = new Node(value);
+            tail = head;
         }
         else
         {
-            node.pushBack((T)value);
+            tail.setNext(new Node<>((T)value));
+            tail = tail.getNext();
         }
 
         return true;
@@ -67,13 +90,14 @@ public class NodeDeque<T> extends AbstractDeque
     {
         if (isEmpty())
         {
-            node = new Node(value);
+            head = new Node(value);
+            tail = head;
         }
         else
         {
-            Node<T> node = this.node;
-            this.node = new Node<>((T)value);
-            this.node.setNextNode(node);
+            Node<T> node = head;
+            head = new Node<>((T)value);
+            head.setNext(node);
         }
 
         return true;
@@ -86,7 +110,23 @@ public class NodeDeque<T> extends AbstractDeque
 
         if (!isEmpty())
         {
-            stringBuilder.append(node);
+            stringBuilder.append(toString(head));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    @NotNull
+    private String toString(Node<T> node)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(node);
+        stringBuilder.append(" ");
+
+        if (node.getNext() != null)
+        {
+            stringBuilder.append(toString(node.getNext()));
         }
 
         return stringBuilder.toString();
