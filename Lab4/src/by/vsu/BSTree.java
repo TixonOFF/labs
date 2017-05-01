@@ -1,5 +1,9 @@
 package by.vsu;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
+
 public class BSTree<T extends Comparable>
 {
     protected Node root;
@@ -130,6 +134,46 @@ public class BSTree<T extends Comparable>
     public String symmetricBypass()
     {
         return Handler.symmetricBypass(root);
+    }
+
+    public void symmetricBypass2()
+    {
+        Stack<Node> stack = new Stack<>();
+        ArrayList<Node> list = new ArrayList<>();
+        ArrayList<Node> out = new ArrayList<>();
+
+        stack.push(root);
+
+        while (true)
+        {
+            if (list.indexOf(stack.get(stack.size() - 1).getLeft()) == -1 && stack.get(stack.size() - 1).getLeft() != null)
+            {
+                stack.push(stack.get(stack.size() - 1).getLeft());
+            }
+            else
+            {
+                if (out.indexOf(stack.get(stack.size() - 1)) == -1)
+                {
+                    System.out.println(stack.get(stack.size() - 1) + " ");
+                    list.add(stack.get(stack.size() - 1));
+                    out.add(stack.get(stack.size() - 1));
+                }
+
+                if (list.indexOf(stack.get(stack.size() - 1).getRight()) == -1 && stack.get(stack.size() - 1).getRight() != null)
+                {
+                    stack.push(stack.get(stack.size() - 1).getRight());
+                }
+                else
+                {
+                    stack.pop();
+                }
+            }
+
+            if (stack.isEmpty())
+            {
+                break;
+            }
+        }
     }
 
     @Override
