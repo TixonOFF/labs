@@ -4,9 +4,13 @@ public class Item<V extends Comparable>
 {
     private Integer key;
     private V value;
-    private Item<V> item = null;
+    private Item<V> next = null;
 
-
+    public Item()
+    {
+    	
+    }
+    
     public Item(Integer key, V value)
     {
         this.key = key;
@@ -23,20 +27,25 @@ public class Item<V extends Comparable>
         return value;
     }
 
-    public Item<V> getItem()
+    public void setNext(Item<V> next)
     {
-        return item;
+    	this.next = next;
+    }
+    
+    public Item<V> getNext()
+    {
+        return next;
     }
 
     public void add(Item<V> item)
     {
-    	Item<V> current= this;
-    	while(current.item!=null)
+    	Item<V> current = this;
+    	while(!current.next.isBorder())
     	{
-    		current=current.item;
+    		current = current.next;
     	}
         
-    	current.item=item;
+    	current.next = item;
     }
 
     public V get(Integer key)
@@ -47,9 +56,9 @@ public class Item<V extends Comparable>
         }
         else
         {
-            if (item != null)
+            if (!next.isBorder())
             {
-                return item.get(key);
+                return next.get(key);
             }
             else
             {
@@ -60,57 +69,24 @@ public class Item<V extends Comparable>
 
     public void pop(Integer key)
     {
-    	if(this.item!=null)
+    	if(!this.next.isBorder())
     	{
-    	 if(this.item.key==key)
-    	 {
-    		 if(this.item.item!=null)
-    		 {
-    			 this.item=this.item.item;
-    		 }else
-    		 {
-    			 this.item=null;
-    		 }
-    	 }
-    	 else
-    	 {
-    		 this.item.pop(key);
-    	 }
-    	}
-    	/*
-    	if(this.getKey().equals(key))  //Если нужно удалить текущий
-    	{
-    		
-    		if(this.item!=null)  // Если нужно удалить текущий и есть следующий
+    		if(this.next.key == key)
     		{
-                 this.key = item.key;
-                 this.value = item.value;
-                 this.item = item.item;
-                 return 0; //Удаление прошло успешно
-    		}
-    		else 
-    		{
-    			return 1; //Происходит удаление последнего элемента
-    		}
-    	}
-    	else
-    	{
-    		if(this.item!=null)
-    		{
-    			if( this.item.pop(key)==1)
-    			{
-    				this.item=null;
-    			}
-    			return 0; //Удаление прошло успешно
+    			this.next = this.next.next;
     		}
     		else
     		{
-    			return 2; //Нет такого элемента
+    			this.next.pop(key);
     		}
     	}
-    	*/
     }
 
+    public boolean isBorder()
+    {
+    	return false;
+    }
+    
     @Override
     public String toString()
     {
@@ -122,10 +98,10 @@ public class Item<V extends Comparable>
         stringBuilder.append("Значение: ");
         stringBuilder.append(getValue());
 
-        if (item != null)
+        if (next != null)
         {
             stringBuilder.append("\n");
-            stringBuilder.append(item.toString());
+            stringBuilder.append(next.toString());
         }
 
         return stringBuilder.toString();

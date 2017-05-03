@@ -33,7 +33,7 @@ public class HashH37Table<V extends Comparable> {
 
     public V get(Integer key)
     {
-        int pos = (int) (this.pos(key) % SIZE);
+        int pos = this.pos(key) % SIZE;
 
         if (array[pos] != null)
         {
@@ -48,9 +48,9 @@ public class HashH37Table<V extends Comparable> {
         int pos =(int) (this.pos(key) % SIZE);
         if(array[pos].getKey()==key)
         {
-        	if(array[pos].getItem()!=null)
+        	if(array[pos].getNext()!=null)
         	{
-        		array[pos]=array[pos].getItem();
+        		array[pos]=array[pos].getNext();
         	}else
         	{
         		array[pos]=null;
@@ -62,10 +62,12 @@ public class HashH37Table<V extends Comparable> {
         }
     }
 
-    private long pos(int key)
+    private int pos(int key)
     {
-    	long hash = 2139062143;
-    	hash = hash*37+key;
+    	String s = Integer.toString(key);
+    	int hash = 2139062143;
+    	for(int i=0; i<s.length(); i++)
+    	hash += hash*37 + Integer.parseInt(Character.toString(s.charAt(i)));
     	
     	return Math.abs(hash);
     }

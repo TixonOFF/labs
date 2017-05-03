@@ -5,41 +5,39 @@ public class HashTable<V extends Comparable>
     private static int SIZE;
 
     private Item<V>[] array;
-    //int mapCount = 0;
 
 
     public HashTable(int size)
     {
         array = new Item[size];
-        this.SIZE=size;
+        
+        this.SIZE = size;
+        
+        for(int i =0; i<size; i++)
+        {
+        	array[i] = new BorderItem<V>();
+        }
     }
 
-    /*public int getMapCount()
-    {
-        return mapCount;
-    }
-
-    private void setMapCount(int mapCount)
-    {
-        this.mapCount = mapCount;
-    }
-*/
+ 
     public void put(Integer key, V value)
     {
         if (this.get(key) == null)
         {
             int pos = key % SIZE;
 
-            if (array[pos] != null)
+            if (!array[pos].isBorder())
             {
                 array[pos].add(new Item<>(key, value));
             }
             else
             {
+            	Item<V> buf = array[pos];
+            	
                 array[pos] = new Item<>(key, value);
+                
+                array[pos].setNext(buf);
             }
-
-//            setMapCount(getMapCount() + 1);
         }
     }
 
@@ -47,7 +45,7 @@ public class HashTable<V extends Comparable>
     {
         int pos = key % SIZE;
 
-        if (array[pos] != null)
+        if (!array[pos].isBorder())
         {
             return array[pos].get(key);
         }
@@ -58,36 +56,14 @@ public class HashTable<V extends Comparable>
     public void pop(Integer key)
     {
         int pos = key % SIZE;
-        if(array[pos].getKey()==key)
+        if(array[pos].getKey() == key)
         {
-        	if(array[pos].getItem()!=null)
-        	{
-        		array[pos]=array[pos].getItem();
-        	}else
-        	{
-        		array[pos]=null;
-        	}
+        	array[pos] = array[pos].getNext();
         }
         else
         {
         	array[pos].pop(key);
         }
-        /*
-        if(array[pos]==null)
-        {
-        switch(array[pos].pop(key)){
-        case 1:
-        	array[pos]=null;
-        	this.setMapCount(getMapCount()-1);
-        	break;
-        case 0:
-        	this.setMapCount(getMapCount()-1);
-        	break;
-        default:
-        	break;
-        }
-        }
-        */
     }
 
     @Override
