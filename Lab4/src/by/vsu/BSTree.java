@@ -1,7 +1,6 @@
 package by.vsu;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 
 public class BSTree<T extends Comparable>
@@ -37,6 +36,8 @@ public class BSTree<T extends Comparable>
         {
             p.setRight(insert(p.getRight(), key));
         }
+
+        p.setHeight(Handler.getRootHeight(p));
 
         return p;
     }
@@ -75,6 +76,8 @@ public class BSTree<T extends Comparable>
                 return min;
             }
         }
+
+        p.setHeight(Handler.getRootHeight(p));
 
         return p;
     }

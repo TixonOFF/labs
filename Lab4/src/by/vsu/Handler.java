@@ -3,6 +3,8 @@ package by.vsu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 public class Handler
 {
     public static boolean find(Node root, Comparable key)
@@ -187,6 +189,8 @@ public class Handler
             return rotateRight(p);
         }
 
+        p.setHeight(Handler.getRootHeight(p));
+
         return p;
     }
 
@@ -252,5 +256,64 @@ public class Handler
         }
 
         return stringBuilder.toString();
+    }
+
+    public static int getChildCount(Node root)
+    {
+        if (root == null)
+        {
+            return 0;
+        }
+
+        return 1 + getChildCount(root.getLeft()) + getChildCount(root.getRight());
+    }
+
+    public static void task22(BSTree bsTree)
+    {
+        ArrayList<Node> allNodes = new ArrayList<>();
+
+        getNodes(allNodes, bsTree.getRoot());
+
+        ArrayList<Comparable> values = new ArrayList<>();
+
+        for (int i = 0; i < allNodes.size(); i++)//находим подходщие узлы из всех
+        {
+            if (allNodes.get(i).getLeft() != null && allNodes.get(i).getRight() != null)
+            {
+                if (getChildCount(allNodes.get(i).getLeft()) == getChildCount(allNodes.get(i).getRight()) && allNodes.get(i).getLeft().getHeight() != allNodes.get(i).getRight().getHeight())
+                {
+                    values.add(allNodes.get(i).getValue());
+                }
+            }
+        }
+
+        for (int i = 0; i < values.size() - 1; i++)//сортировка
+        {
+            for (int j = 0; j < values.size() - 1 - i; j++)
+            {
+                if (values.get(j).compareTo(values.get(j + 1)) > 0)
+                {
+                    Comparable buffer = values.get(j);
+                    values.set(j, values.get(j + 1));
+                    values.set(j + 1, buffer);
+                }
+            }
+        }
+
+        if (!values.isEmpty())
+        {
+            bsTree.delete(values.get(values.size() / 2));
+        }
+    }
+
+    public static void getNodes(ArrayList<Node> nodes, Node root)
+    {
+        if (root != null)
+        {
+            nodes.add(root);
+
+            getNodes(nodes, root.getLeft());
+            getNodes(nodes, root.getRight());
+        }
     }
 }
