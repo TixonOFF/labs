@@ -2,8 +2,8 @@ package by.vsu;
 
 public class Node<T extends Comparable>
 {
-    private Node<T> left = null;
-    private Node<T> right = null;
+    private Node<T> left;
+    private Node<T> right;
     private T value;
     private int depth;
     private int height = 1;

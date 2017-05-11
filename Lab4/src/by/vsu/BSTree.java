@@ -5,12 +5,23 @@ import java.util.Stack;
 
 public class BSTree<T extends Comparable>
 {
-    protected Node root;
+    protected Node border = new Node(null, 0);
+    protected Node root = border;
 
+
+    public BSTree()
+    {
+        border.setHeight(0);
+    }
 
     public Node getRoot()
     {
         return root;
+    }
+
+    public Node getBorder()
+    {
+        return border;
     }
 
     public void setRoot(Node root)
@@ -18,13 +29,23 @@ public class BSTree<T extends Comparable>
         this.root = root;
     }
 
+    public void setBorder(Node border)
+    {
+        this.border = border;
+    }
+
     private Node insert(Node p, Comparable k)
     {
         T key = (T)k;
 
-        if(p == null)
+        if(p == border)
         {
-            return new Node(key, 0);
+            Node node = new Node(key, 0);
+            node.setLeft(getBorder());
+            node.setRight(getBorder());
+            node.setHeight(0);
+
+            return node;
         }
 
         if(key.compareTo(p.getValue()) < 0)
@@ -37,16 +58,16 @@ public class BSTree<T extends Comparable>
             p.setRight(insert(p.getRight(), key));
         }
 
-        p.setHeight(Handler.getRootHeight(p));
+        p.setHeight(Math.max(p.getLeft().getHeight(), p.getRight().getHeight()));
 
         return p;
     }
 
     private Node remove(Node p, T k)
     {
-        if(p == null)
+        if(p == border)
         {
-            return null;
+            return border;
         }
 
         if(k.compareTo(p.getValue()) < 0)
@@ -64,20 +85,23 @@ public class BSTree<T extends Comparable>
                 Node q = p.getLeft();
                 Node r = p.getRight();
 
-                if(r == null)
+                if(r == border)
                 {
+                    q.setHeight(Math.max(q.getLeft().getHeight(), q.getRight().getHeight()));
+
                     return q;
                 }
 
-                Node min = Handler.findMin(r);
-                min.setRight(Handler.removeMin(r));
+                Node min = Handler.findMin(r, border);
+                min.setRight(Handler.removeMin(r, border));
                 min.setLeft(q);
+                min.setHeight(Math.max(min.getLeft().getHeight(), min.getRight().getHeight()));
 
                 return min;
             }
         }
 
-        p.setHeight(Handler.getRootHeight(p));
+        p.setHeight(Math.max(p.getLeft().getHeight(), p.getRight().getHeight()));
 
         return p;
     }
@@ -85,37 +109,40 @@ public class BSTree<T extends Comparable>
     public void add(T key)
     {
         setRoot(insert(root, key));
+
+        root.setHeight(Handler.getRootHeight(root, border));
+        Handler.setHeight(root, border);
     }
 
     public void delete(T key)
     {
         setRoot(remove(root, key));
+
+        root.setHeight(Handler.getRootHeight(root, border));
+        Handler.setHeight(root, border);
     }
 
     public boolean find(T key)
     {
-        if (root != null)
-        {
-            if (root.getValue().compareTo(key) == 0)
-            {
-                return true;
-            }
+        border.setValue(key);
 
-            return Handler.find(root, key);
+        if (root.getValue().compareTo(key) == 0)
+        {
+            return root != border;
         }
 
-        return false;
+        return Handler.find(root, key, border);
     }
 
     public int getHeight(T key)
     {
-        if (root == null)
+        if (root == border)
         {
             return -1;
         }
         else
         {
-            return Handler.getHeight(root, Handler.getNode(root, key));
+            return Handler.getHeight(root, Handler.getNode(root, key, border));
         }
     }
 
@@ -123,7 +150,7 @@ public class BSTree<T extends Comparable>
     {
         if (find(key))
         {
-            return Handler.getNode(root, key).getDepth();
+            return Handler.getNode(root, key, border).getDepth();
         }
 
         return -1;
@@ -131,12 +158,12 @@ public class BSTree<T extends Comparable>
 
     public String reverseBypass()
     {
-        return Handler.reverseBypass(root);
+        return Handler.reverseBypass(root, border);
     }
 
     public String symmetricBypass()
     {
-        return Handler.symmetricBypass(root);
+        return Handler.symmetricBypass(root, border);
     }
 
     public void symmetricBypass2()
@@ -149,7 +176,7 @@ public class BSTree<T extends Comparable>
 
         while (true)
         {
-            if (list.indexOf(stack.get(stack.size() - 1).getLeft()) == -1 && stack.get(stack.size() - 1).getLeft() != null)
+            if (list.indexOf(stack.get(stack.size() - 1).getLeft()) == -1 && stack.get(stack.size() - 1).getLeft() != border)
             {
                 stack.push(stack.get(stack.size() - 1).getLeft());
             }
@@ -162,7 +189,7 @@ public class BSTree<T extends Comparable>
                     out.add(stack.get(stack.size() - 1));
                 }
 
-                if (list.indexOf(stack.get(stack.size() - 1).getRight()) == -1 && stack.get(stack.size() - 1).getRight() != null)
+                if (list.indexOf(stack.get(stack.size() - 1).getRight()) == -1 && stack.get(stack.size() - 1).getRight() != border)
                 {
                     stack.push(stack.get(stack.size() - 1).getRight());
                 }
@@ -182,6 +209,6 @@ public class BSTree<T extends Comparable>
     @Override
     public String toString()
     {
-        return Handler.linearBypass(root);
+        return Handler.linearBypass(root, border);
     }
 }

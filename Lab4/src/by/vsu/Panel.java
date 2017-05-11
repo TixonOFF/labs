@@ -110,13 +110,13 @@ public class Panel extends JFrame
         @Override
         public void paint(Graphics g)
         {
-            if (tree.root != null)
+            if (tree.getRoot() != tree.getBorder())
             {
-                height = Handler.getRootHeight(tree.root);
+                height = Handler.getRootHeight(tree.getRoot(), tree.getBorder());
                 scale = SIZE / (int) Math.pow(2, height);
                 radius = scale / 2 - PADDING;
 
-                checkup(g, tree.root, BORDER + SIZE / 2, radius + 4 * BORDER);
+                checkup(g, tree.getRoot(), BORDER + SIZE / 2, radius + 4 * BORDER);
             }
         }
 
@@ -136,18 +136,18 @@ public class Panel extends JFrame
 
         public void checkup(Graphics g, Node node, int x, int y)
         {
-            if (node != null)
+            if (node != tree.getBorder())
             {
                 int y1 = y + SIZE / (height + 1);
-                int x1 = (int) (scale * Math.pow(2, Handler.getHeight(tree.root, node) - 2));
+                int x1 = (int) (scale * Math.pow(2, node.getHeight() - 2));
 
-                if (node.getLeft() != null)
+                if (node.getLeft() != tree.getBorder())
                 {
                     drawLine(g, x, y, x - x1, y1);
                     checkup(g, node.getLeft(), x - x1, y1);
                 }
 
-                if (node.getRight() != null)
+                if (node.getRight() != tree.getBorder())
                 {
                     drawLine(g, x, y, x + x1, y1);
                     checkup(g, node.getRight(), x + x1, y1);

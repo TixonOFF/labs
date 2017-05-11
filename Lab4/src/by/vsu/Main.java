@@ -4,8 +4,8 @@ public class Main
 {
     public static void main(String[] args)
     {
-        BSTree<Integer> bsTree = new BSTree<>();
-        //BSTree<Integer> bsTree = new AVLTree<>();
+        //BSTree<Integer> bsTree = new BSTree<>();
+        BSTree<Integer> bsTree = new AVLTree<>();
 
         bsTree.add(60);
         bsTree.add(50);
@@ -26,11 +26,5 @@ public class Main
         bsTree.add(96);
 
         new Panel(bsTree);
-
-        //bsTree.symmetricBypass2();
-
-        Handler.task22(bsTree);
-
-        System.out.println(bsTree);
     }
 }

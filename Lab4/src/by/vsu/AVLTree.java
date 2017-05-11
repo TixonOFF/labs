@@ -6,9 +6,14 @@ public class AVLTree<T extends Comparable> extends BSTree
     {
         T key = (T)k;
 
-        if(p == null)
+        if(p == border)
         {
-            return new Node(key, 0);
+            Node node = new Node(key, 0);
+            node.setLeft(getBorder());
+            node.setRight(getBorder());
+            node.setHeight(0);
+
+            return node;
         }
 
         if(key.compareTo(p.getValue()) < 0)
@@ -21,14 +26,16 @@ public class AVLTree<T extends Comparable> extends BSTree
             p.setRight(insert(p.getRight(), key));
         }
 
-        return Handler.balance(p);
+        p.setHeight(Math.max(p.getLeft().getHeight(), p.getRight().getHeight()));
+
+        return Handler.balance(p, border);
     }
 
     private Node remove(Node p, Comparable k)
     {
-        if(p == null)
+        if(p == border)
         {
-            return null;
+            return border;
         }
 
         if(k.compareTo(p.getValue()) < 0)
@@ -46,29 +53,24 @@ public class AVLTree<T extends Comparable> extends BSTree
                 Node q = p.getLeft();
                 Node r = p.getRight();
 
-                if(r == null)
+                if(r == border)
                 {
+                    q.setHeight(Math.max(q.getLeft().getHeight(), q.getRight().getHeight()));
+
                     return q;
                 }
 
-                Node min = Handler.findMin(r);
-                min.setRight(Handler.removeMin(r));
+                Node min = Handler.findMin(r, border);
+                min.setRight(Handler.removeMin(r, border));
                 min.setLeft(q);
+                min.setHeight(Math.max(min.getLeft().getHeight(), min.getRight().getHeight()));
 
-                return Handler.balance(min);
+                return Handler.balance(min, border);
             }
         }
 
-        return Handler.balance(p);
-    }
+        p.setHeight(Math.max(p.getLeft().getHeight(), p.getRight().getHeight()));
 
-    public void add(Comparable key)
-    {
-        setRoot(insert(root, key));
-    }
-
-    public void delete(Comparable key)
-    {
-        setRoot(remove(root, key));
+        return Handler.balance(p, border);
     }
 }
