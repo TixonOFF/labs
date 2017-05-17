@@ -18,7 +18,7 @@ public class Tree
 
         for (Map.Entry<Character, Integer> entry : alphabet.entrySet())
         {
-            root.append(entry.getKey());
+            root.append(entry.getKey());//добавляем все символы в строку
         }
 
         this.root = new Node(root.toString());
@@ -26,7 +26,7 @@ public class Tree
         char[] charArray = this.root.getValue().toCharArray();
         int length = charArray.length;
 
-        for (int i = 0; i < length - 1; i++)
+        for (int i = 0; i < length - 1; i++)//сортировка методом пузырька по частотам
         {
             for (int j = 0; j < length - i - 1; j++)
             {
@@ -70,6 +70,8 @@ public class Tree
                 break;
             }
 
+            //i показывает середину массива(левая сумма минимально отличается от правой)(i смещено на 1 вправо)
+
 
             StringBuilder left = new StringBuilder();
             for (int j = 0; j < i - 1; j++)
@@ -78,7 +80,7 @@ public class Tree
             }
 
             node.setLeft(new Node(left.toString()));
-            setNodes(node.getLeft(), Arrays.copyOfRange(symbols, 0, i - 1));
+            setNodes(node.getLeft(), Arrays.copyOfRange(symbols, 0, i - 1));//повторяем для левого и правого узлов
 
 
             StringBuilder right = new StringBuilder();
@@ -106,7 +108,7 @@ public class Tree
         this.root = root;
     }
 
-    public String getCode(char symbol)
+    public String getCode(char symbol)//возвращает код символа
     {
         if (root != null && root.getValue().indexOf(symbol) != -1)
         {
@@ -128,7 +130,7 @@ public class Tree
             return "";
         }
 
-        if (node.getLeft() != null && node.getLeft().getValue().indexOf(symbol) != -1)
+        if (node.getLeft() != null && node.getLeft().getValue().indexOf(symbol) != -1)//если символ есть слева
         {
             return "0" + getCode(node.getLeft(), symbol);
         }
@@ -141,7 +143,7 @@ public class Tree
         return null;
     }
 
-    public String getByteMessage(String stringMessage)
+    public String getByteMessage(String stringMessage)//возвращает код сообщения
     {
         StringBuilder res = new StringBuilder();
 
@@ -153,14 +155,14 @@ public class Tree
         return res.toString();
     }
 
-    public String getStringMessage(String byteMessage)
+    public String getStringMessage(String byteMessage)//возвращает сообщение по коду
     {
         StringBuilder res = new StringBuilder();
         StringBuilder symbol = new StringBuilder();
 
         for (int i = 0; i < byteMessage.length(); i++)
         {
-            symbol.append(byteMessage.charAt(i));
+            symbol.append(byteMessage.charAt(i));//добавляем по 1 символу кода пока не получим код символа
 
             Character character = getLeaf(symbol.toString());
             if (character != null)
@@ -193,15 +195,15 @@ public class Tree
         return null;
     }
 
-    private String getLeaf(Node node, String byteCode)
+    private String getLeaf(Node root, String byteCode)//возвращает символ по коду переходя по дереву
     {
         if (byteCode.equals(""))
         {
-            return node.getValue();
+            return root.getValue();
         }
         else
         {
-            if (byteCode.charAt(0) == '0' && node.getLeft() != null)
+            if (byteCode.charAt(0) == '0' && root.getLeft() != null)
             {
                 StringBuilder newByteCode = new StringBuilder();
                 for (int i = 1; i < byteCode.length(); i++)
@@ -209,10 +211,10 @@ public class Tree
                     newByteCode.append(byteCode.charAt(i));
                 }
 
-                return getLeaf(node.getLeft(), newByteCode.toString());
+                return getLeaf(root.getLeft(), newByteCode.toString());
             }
 
-            if (byteCode.charAt(0) == '1' && node.getRight() != null)
+            if (byteCode.charAt(0) == '1' && root.getRight() != null)
             {
                 StringBuilder newByteCode = new StringBuilder();
                 for (int i = 1; i < byteCode.length(); i++)
@@ -220,7 +222,7 @@ public class Tree
                     newByteCode.append(byteCode.charAt(i));
                 }
 
-                return getLeaf(node.getRight(), newByteCode.toString());
+                return getLeaf(root.getRight(), newByteCode.toString());
             }
         }
 

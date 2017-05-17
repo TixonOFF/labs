@@ -1,6 +1,5 @@
 package by.vsu;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Main
@@ -8,7 +7,7 @@ public class Main
     public static void main(String[] args)
     {
         HashMap<Character, Integer> alphabet = new HashMap<>();
-        alphabet.put(' ', 17);
+        alphabet.put(' ', 13);
         alphabet.put('а', 8);
         alphabet.put('б', 1);
         alphabet.put('в', 4);
