@@ -32,6 +32,7 @@ public class Main
             {
                 System.out.println("Из " + i + " в " + j + ":");
                 handler.shortestWay(i, j);
+                handler.getWay(i, j);
                 System.out.println();
             }
         }
